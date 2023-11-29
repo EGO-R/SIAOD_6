@@ -3,50 +3,40 @@
 
 #include <iostream>
 #include <vector>
+#include <iomanip>
 using namespace std;
 
 
 class Graph {
 public:
     vector<vector<int>> matrix;
+    vector<vector<int>> temp_matrix;
     int numVertices;
 
 
-    Graph(int numVertices) : numVertices(numVertices) {
-        matrix.resize(numVertices, vector<int>(numVertices, 0));
-    }
+    Graph();
 
-    void addEdge(int i, int j, int weight) {
-        matrix[i][j] = weight;
-    }
+    void addEdge(int i, int j, int weight);
 
-    void addVertex() {
-        numVertices++;
-        for(auto& row : matrix) {
-            row.push_back(0);
-        }
-        matrix.push_back(vector<int>(numVertices, 0));
-        for (int i = 0; i < numVertices; i++) {
-            matrix[i][numVertices-1] = 0;
-            matrix[numVertices-1][i] = 0;
-        }
+    void addVertex();
 
 
-    }
+    void addEdgesToVertex(int new_index);
+
+    bool isBridge(int i, int j);
+
+    void DFS(int v, std::vector<bool>* visited);
+
+    bool isEuler();
 
 
-    void addEdgesToNewVertex() {
-        int index, weight;
-        std::cout << "Enter the index of a node to connect to the new node and the weight of the edge (enter a negative index to stop):\n";
-        while(true) {
-            std::cin >> index;
-            if(index < 0) {
-                break;
-            }
-            std::cin >> weight;
-            addEdge(numVertices-1, index, weight);
-        }
-    }
+    void findEulerCycle();
+
+    void printGraph();
+
+    bool isConnected();
+
+    void prim();
 };
 
 
