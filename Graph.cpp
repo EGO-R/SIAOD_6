@@ -21,8 +21,9 @@ void Graph::addVertex() {
 void Graph::addEdgesToVertex(int new_index) {
     int index, weight;
     while(true) {
-        cout << "Индекс вершины для связи: ";
+        cout << "Номер вершины для связи: ";
         cin >> index;
+        index--;
         if(index < 0) {
             break;
         }
@@ -124,7 +125,7 @@ void Graph::findEulerCycle() {
 
     cout << "Цикл: ";
     for (int i : cycle) {
-        cout << i << " ";
+        cout << i + 1 << " ";
     }
     cout << endl;
 }
@@ -137,7 +138,7 @@ void Graph::printGraph() {
     }
     cout << setw(4) << "";
     for (int i = 0; i < numVertices; i++) {
-        cout << setw(3) << i;
+        cout << setw(3) << i + 1;
     }
     cout << endl;
 
@@ -148,9 +149,35 @@ void Graph::printGraph() {
     cout << endl;
 
     for (int i = 0; i < numVertices; i++) {
-        cout << setw(3) << i << "|";
+        cout << setw(3) << i + 1 << "|";
         for (int j = 0; j < numVertices; j++) {
             cout << setw(3) << matrix[i][j];
+        }
+        cout << "\n";
+    }
+}
+
+void Graph::printTempGraph() {
+    if (temp_matrix.empty()) {
+        cout << "Граф пустой!" << endl;
+        return;
+    }
+    cout << setw(4) << "";
+    for (int i = 0; i < numVertices; i++) {
+        cout << setw(3) << i + 1;
+    }
+    cout << endl;
+
+    cout << setw(3) << "";
+    for (int i = 0; i < numVertices; i++) {
+        cout << "----";
+    }
+    cout << endl;
+
+    for (int i = 0; i < numVertices; i++) {
+        cout << setw(3) << i + 1 << "|";
+        for (int j = 0; j < numVertices; j++) {
+            cout << setw(3) << temp_matrix[i][j];
         }
         cout << "\n";
     }
@@ -168,34 +195,47 @@ bool Graph::isConnected() {
 }
 
 void Graph::prim() {
+    temp_matrix = matrix;
     if (!isConnected()) {
         cout << "Граф не связный!" << endl;
         return;
     }
+    temp_matrix.clear();
     temp_matrix.resize(numVertices, vector<int>(numVertices, 0));
 
 
     vector<bool> visited(numVertices, false);
 
-    int i = 0;
+
+    visited[0] = true;
     while (true) {
-        int min_index = -1, min_edge = 0;
-        for (int j = 0; j < numVertices; j++) {
-            if (matrix[i][j] != 0 && i != j) {
-                if (min_edge == 0 || matrix[i][j] < min_edge) {
-                    min_edge = matrix[i][j];
-                    min_index = j;
+        int min_i = -1, min_j = -1, min_edge = 0;
+
+        for (int i = 0; i < numVertices; i++) {
+            if (visited[i]) {
+                for (int j = 0; j < numVertices; j++) {
+                    if (matrix[i][j] != 0 && i != j && !visited[j]) {
+                        if (min_edge == 0 || matrix[i][j] < min_edge) {
+                            min_edge = matrix[i][j];
+                            min_i = i;
+                            min_j = j;
+                        }
+                    }
                 }
             }
         }
+
+
         if (min_edge != 0) {
-            temp_matrix[i][min_index] = matrix[i][min_index];
-            temp_matrix[min_index][i] = matrix[min_index][i];
-            i = min_index;
+            temp_matrix[min_i][min_j] = matrix[min_i][min_j];
+            temp_matrix[min_j][min_i] = matrix[min_j][min_i];
+            visited[min_j] = true;
         } else
             break;
     }
 
 
+
+    printTempGraph();
 
 }

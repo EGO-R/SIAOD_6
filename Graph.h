@@ -34,6 +34,8 @@ public:
 
     void printGraph();
 
+    void printTempGraph();
+
     bool isConnected();
 
     void prim();
